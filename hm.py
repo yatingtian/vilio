@@ -371,6 +371,11 @@ def main():
                             shuffle=False, drop_last=False),
                     dump=os.path.join(args.output, '{}_{}.csv'.format(args.exp, split))
                 )
+                result = hm.evaluate(
+                    get_tuple(split, bs=args.batch_size,
+                            shuffle=False, drop_last=False)
+                )
+                print(result)
             # Anything else that has labels:
             elif 'dev' in split or 'valid' in split or 'train' in split:
                 result = hm.evaluate(

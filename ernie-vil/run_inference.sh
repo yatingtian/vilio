@@ -13,6 +13,7 @@ RES_FILE=$8
 SPLIT=$9
 EXP=${10}
 COMB=${11}
+EPOCH=5 # modified
 
 source $CONF_FILE
 
@@ -50,6 +51,7 @@ python finetune.py --use_cuda "True"                                           \
                 --skip_steps 10                                                \
                 --split ${SPLIT}                                               \
                 --exp ${EXP}                                                   \
-                --combine ${COMB}
+                --combine ${COMB}                                              \
+                --epoch ${EPOCH}
 
 

@@ -79,7 +79,11 @@ def doit(detector, raw_images):
         # Preprocessing
         inputs = []
         for raw_image in raw_images:
-            image = detector.transform_gen.get_transform(raw_image).apply_image(raw_image)
+            try: # try except added by TYT
+                image = detector.transform_gen.get_transform(raw_image).apply_image(raw_image)
+            except Exception as e:
+                print(e)
+                continue
             image = torch.as_tensor(image.astype("float32").transpose(2, 0, 1))
             inputs.append({"image": image, "height": raw_image.shape[0], "width": raw_image.shape[1]})
         images = detector.model.preprocess_image(inputs)

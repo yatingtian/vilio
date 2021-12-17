@@ -25,10 +25,12 @@ class ImageFeaturesH5Reader(object):
         #    )
 
         entries = []
-        entries.extend(
-            [json.loads(jline) for jline in open(jsonl_path, "r").read().split('\n')]
-            )
-
+        try:
+            entries.extend(
+                [json.loads(jline) for jline in open(jsonl_path, "r").read().split('\n')]
+                )
+        except Exception as e:
+            print(e)
         id2datum = {datum["id"]: datum for datum in entries}
 
         #print("Load %d data from split(s) %s." % (len(self.raw_data)))

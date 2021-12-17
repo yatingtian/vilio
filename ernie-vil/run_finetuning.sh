@@ -61,6 +61,6 @@ python finetune.py --use_cuda "True"                                           \
                 --validation_steps ${VALID_STEPS}                              \
                 --skip_steps 10                                                \
                 --split ${SPLIT}                                               \
-                --stop_steps ${STOP}
+                --stop_steps ${STOP}                                           
 
 

@@ -34,7 +34,7 @@ class HMTorchDataset(Dataset):
         print("Load %d data from split(s) %s." % (len(self.raw_data), self.name))
 
         # List to dict (for evaluation and others)
-        self.id2datum = {datum["id"]: datum for datum in self.raw_data}
+        self.id2datum = {int(datum["id"]): datum for datum in self.raw_data} 
 
         # Loading detection features to img_data
         img_data = []
@@ -48,13 +48,12 @@ class HMTorchDataset(Dataset):
             # Adding int here to convert 0625 to 625
             self.imgid2img[int(img_datum['img_id'])] = img_datum
 
-
         # Only keep the data with loaded image features
         self.data = []
         for datum in self.raw_data:
             # In HM the Img Id field is simply "id"
-            if datum['id'] in self.imgid2img:
-                self.data.append(datum)
+            if int(datum['id']) in self.imgid2img: #modified
+                self.data.append(datum)  #modified
 
         print("Use %d data in torch dataset" % (len(self.data)))
         print()
@@ -64,7 +63,6 @@ class HMTorchDataset(Dataset):
 
 
     def __getitem__(self, item: int):
-
         datum = self.data[item]
 
         img_id = datum['id']
@@ -72,7 +70,7 @@ class HMTorchDataset(Dataset):
 
 
         # Get image info
-        img_info = self.imgid2img[img_id]
+        img_info = self.imgid2img[int(img_id)] #modified
         obj_num = img_info['num_boxes']
         feats = img_info['features'].copy()
         boxes = img_info['boxes'].copy()
@@ -124,7 +122,7 @@ class HMEvaluator:
 
         for img_id, ans in id2ans.items():
 
-            datum = self.dataset.id2datum[int(img_id)]
+            datum = self.dataset.id2datum[int(img_id)] #modified
             label = datum["label"]
 
             if ans == label:
@@ -155,8 +153,7 @@ class HMEvaluator:
     def roc_auc(self, id2ans:dict):
         """Calculates roc_auc score"""
         ans = list(id2ans.values())
-        label = [self.dataset.id2datum[int(key)]["label"] for key in id2ans.keys()]
-
+        label = [self.dataset.id2datum[int(key)]["label"] for key in id2ans.keys()] #modified
         score = roc_auc_score(label, ans)
         return score
 
@@ -189,13 +186,13 @@ def load_obj_tsv(fname, ids, topk=args.topk):
         boxes = args.num_features # Same boxes for all
 
         for i, item in enumerate(reader):
-            
             # Check if id in list of ids to save memory
             if int(item["img_id"]) not in ids:
                 continue
 
             for key in ['img_h', 'img_w', 'num_boxes']:
                 item[key] = int(item[key])
+
             
             boxes = item['num_boxes']
             decode_config = [

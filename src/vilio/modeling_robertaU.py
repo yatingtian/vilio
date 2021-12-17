@@ -29,6 +29,8 @@ from torch.nn import init
 from torch.nn import functional as F
 import importlib
 
+from param import args
+
 ### BOTTOM-UP APPROACH ###
 # We start with the lowest level & then go up step by step
 
@@ -266,7 +268,14 @@ class UniterImageEmbeddings(nn.Module):
 
         # Note: DEFAULT VALUE was 7 --- For some reason I do not know I had to change it to 4 
         # I think it is the amount of features per bbox?????????????? 
-        self.pos_linear = nn.Linear(4, config.hidden_size)
+        # self.pos_linear = nn.Linear(4, config.hidden_size)
+        
+        # modified above to:
+        if args.num_pos == 6:
+            # Use the full 7 pos as in original
+            self.pos_linear = nn.Linear(7, config.hidden_size)
+        else:
+            self.pos_linear = nn.Linear(4, config.hidden_size)
 
         # tf naming convention for layer norm
         self.LayerNorm = FusedLayerNorm(config.hidden_size, eps=1e-12)
